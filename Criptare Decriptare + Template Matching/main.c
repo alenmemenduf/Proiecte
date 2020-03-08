@@ -278,7 +278,7 @@ void Decriptare(char *initiala,char *criptata,char *cheie)
     int i;
     unsigned char c;
     unsigned int latime,inaltime,SV;
-    unsigned int *C,*R,*liniarizare;
+    unsigned int *C,*R;
     fseek(fin,18,SEEK_SET);
     fread(&latime,sizeof(unsigned int),1,fin);
     fread(&inaltime,sizeof(unsigned int),1,fin);
@@ -313,7 +313,6 @@ fclose(fcheie);
 
 free(R);
 free(C);
-free(liniarizare);
 
 }
 
@@ -499,44 +498,42 @@ struct fereastra *Corelatie(char* imagine,char* sablon,double ps,unsigned int *n
     double corr=0,Sbara,Fbara,ds,df; // corr = corelatie ; intensitate medie sablon ; intensitate Fimagine ; deviatie sablon ; deviatie Fimagine
 
     n = LatimeSablon * InaltimeSablon;
-
     Sbara = MedieSablon(sablon);
     ds = deviatieSablon(sablon);
 
-
-int i,j;
-for(i=0;i<Inaltime;i++)
-{
-    for(j=0;j<Latime-LatimeSablon;j++)
+    int i,j;
+    for(i=0;i<Inaltime;i++)
     {
-        Fbara = MedieFimagine(Latime,Imagine_liniarizata,i,j,LatimeSablon,InaltimeSablon);
-        df = deviatieFimagine(Latime,Imagine_liniarizata,i,j,LatimeSablon,InaltimeSablon);
-
-        for(k=0;k<InaltimeSablon;k++)
+        for(j=0;j<Latime-LatimeSablon;j++)
         {
-            for(l=0;l<LatimeSablon;l++)
+            Fbara = MedieFimagine(Latime,Imagine_liniarizata,i,j,LatimeSablon,InaltimeSablon);
+            df = deviatieFimagine(Latime,Imagine_liniarizata,i,j,LatimeSablon,InaltimeSablon);
+
+            for(k=0;k<InaltimeSablon;k++)
             {
-                corr += ((((unsigned char)Imagine_liniarizata[(i+k)*Latime+(j+l)] - Fbara) * ((unsigned char)Sablon_liniarizat[k*LatimeSablon+l] - Sbara)) / (ds*df));
+                for(l=0;l<LatimeSablon;l++)
+                {
+                    corr += ((((unsigned char)Imagine_liniarizata[(i+k)*Latime+(j+l)] - Fbara) * ((unsigned char)Sablon_liniarizat[k*LatimeSablon+l] - Sbara)) / (ds*df));
+                }
             }
+
+            corr = abs(corr);
+            corr /= n;
+            if(corr >= ps)
+                {
+                    f[*nrferestre].x = i;
+                    f[*nrferestre].y = j;
+                    f[*nrferestre].latime = LatimeSablon;
+                    f[*nrferestre].inaltime = InaltimeSablon;
+                    f[*nrferestre].cor = corr;
+
+                    f = realloc(f,(*nrferestre+2)*sizeof(struct fereastra));
+                    *nrferestre = *nrferestre + 1;
+                }
+            corr = 0;
         }
 
-        corr = abs(corr);
-        corr /= n;
-        if(corr >= ps)
-            {
-                f[*nrferestre].x = i;
-                f[*nrferestre].y = j;
-                f[*nrferestre].latime = LatimeSablon;
-                f[*nrferestre].inaltime = InaltimeSablon;
-                f[*nrferestre].cor = corr;
-
-                f = realloc(f,(*nrferestre+2)*sizeof(struct fereastra));
-                *nrferestre = *nrferestre + 1;
-            }
-        corr = 0;
     }
-
-}
     free(Imagine_liniarizata); free(Sablon_liniarizat);
     fclose(fimagine); fclose(fsablon);
     return f;
@@ -607,14 +604,24 @@ float suprapunere(struct fereastra a,struct fereastra b) //SUPRAPUNEREA ARIILOR
 {
     int latime_intersectat,inaltime_intersectat;
     float ab_intersectat,ab_reunit;
+    if(a.x < b.x)
+        latime_intersectat = a.x + a.latime - b.x;
+    else
+        latime_intersectat = b.x + b.latime - a.x;
 
+    if (a.y < b.y)
+        inaltime_intersectat = a.y + a.inaltime - b.y;
+    else
+        inaltime_intersectat = b.y + b.inaltime - a.y;
 
-    latime_intersectat = a.latime-abs(a.y - b.y);
-    inaltime_intersectat = a.inaltime-abs(a.x - b.x);
-    //if((latime_intersectat>=0 && latime_intersectat<=11)&&(inaltime_intersectat>=0&&inaltime_intersectat<=15)){
-        ab_intersectat = latime_intersectat * inaltime_intersectat;
-        ab_reunit = 2*a.inaltime*a.latime-ab_intersectat;
-        if(ab_intersectat/ab_reunit >= 0.2 && ab_intersectat/ab_reunit <=1)return 1;//}
+    if((latime_intersectat > 0 && latime_intersectat <= 11)
+        &&(inaltime_intersectat > 0 && inaltime_intersectat <= 15))
+        {
+            ab_intersectat = latime_intersectat * inaltime_intersectat;
+            ab_reunit = 2 * a.inaltime * a.latime - ab_intersectat;
+            if(ab_intersectat / ab_reunit >= 0.2 && ab_intersectat / ab_reunit <= 1)
+                return 1;
+        }
     return 0;
 }
 
@@ -625,7 +632,7 @@ void Eliminarea_nonMaximelor(struct fereastra D[],unsigned int nrTotalFerestre) 
     for(int i=0;i<nrTotalFerestre-1;i++)
         for(int j=i+1;j<nrTotalFerestre;j++)
             if(suprapunere(D[i],D[j])==1)
-                D[i].Arie = D[j].Arie = 0;
+                D[j].Arie = 0;
 }
 
 int main()
@@ -649,9 +656,8 @@ int main()
 
     grayscale_image(poza_initiala,poza_grayscale); // POZA INITIALA => GRAYSCALE
 
-    unsigned int nrsabloane;
-    printf("Numar de sabloane:\n"); //CITIREA NUMARULUI DE SABLOANE
-    scanf("%u",&nrsabloane);
+    unsigned int nrsabloane = 10;
+    printf("Numar de sabloane:10\n"); //CITIREA NUMARULUI DE SABLOANE
 
     float prag = 0.50;
 
@@ -670,13 +676,22 @@ int main()
 char **v = malloc(10*sizeof(char*));
 for(int i=0;i<10;i++)                   //VECTORUL V PENTRU CITIREA SIRURILOR INAINTEA EXECUTARII PROGRAMULUI (cifraX.bmp)
     v[i] = malloc(100*sizeof(char));
-
+/*
 for(int i=0;i<nrsabloane;i++)
 {
     printf("Sablonul nr %u:\n\n",i+1);
     scanf("%s",v[i]);
 }
-
+*/
+for (int i = 0; i < nrsabloane; i++)
+{
+    char x[] = "0";
+    x[0] += i;
+    char str[20] = "cifra";
+    strcat(str, x);
+    strcat(str, ".bmp");
+    strcpy(v[i],str);
+}
 for(int i=0;i<nrsabloane;i++)
 {
 printf("sablonul %u\n",i);
@@ -775,7 +790,7 @@ printf("sablonul %u\n",i);
 
         qsort(D,nrFerestreTotal,sizeof(D[0]),comparatie);
 
-        //Eliminarea_nonMaximelor(D,nrFerestreTotal);
+        Eliminarea_nonMaximelor(D,nrFerestreTotal);
         for(unsigned int i=0;i<nrFerestreTotal;i++)
             {   if(D[i].Arie!=0)
                     Colorare("test.bmp",D[i],D[i].Culoare);
