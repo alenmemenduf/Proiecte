@@ -8,22 +8,24 @@ public class Angajat implements Comparable<Angajat> {
     protected static int nrAngajati;
     protected int idAngajat;
     protected int salariu;
-    protected boolean vacanta = false;
+    protected boolean vacanta;
 
     public Angajat(){
         this.typeAngajat = "Angajat";
         this.nume = null;
         this.salariu = 0;
+        this.vacanta = false;
 
         synchronized(this){
             this.idAngajat = nrAngajati;
             nrAngajati++;
         }
     }
-    public Angajat(String nume, int salariu) {
+    public Angajat(String nume, int salariu, boolean vacanta) {
         this.typeAngajat = "Angajat";
         this.nume = nume;
         this.salariu = salariu;
+        this.vacanta = vacanta;
 
         synchronized(this){
             this.idAngajat = nrAngajati;

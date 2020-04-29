@@ -1,13 +1,24 @@
 package com.company.Angajati;
 import java.util.*;
+import java.time.*;
 
 public final class Service {
     private ArrayList<Angajat> Angajati;
     private HashMap<String, Integer> frecventaAngajati = new HashMap<>();
     private Vector<String> ierarhieAngajati = new Vector<>();
 
-    public Service() {
+    public Service(){
+        CsvRepo csvRepo = CsvRepo.getInstance();
+
         Angajati = new ArrayList<>();
+        try {
+            Angajati.addAll(csvRepo.read("./Angajati.csv", Angajat.class));
+            Angajati.addAll(csvRepo.read("./DirectoriDeCanal.csv", DirectorDeCanal.class));
+            Angajati.addAll(csvRepo.read("./MembriDeProiect.csv", MembruDeProiect.class));
+            Angajati.addAll(csvRepo.read("./DirectoriDeDepartament.csv", DirectorDeDepartament.class));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         ierarhieAngajati.add("Angajat");
         ierarhieAngajati.add("AngajatCuDepartament");
@@ -17,12 +28,9 @@ public final class Service {
         ierarhieAngajati.add("DirectorDeDepartament");
         ierarhieAngajati.add("AsistentMembruDeBoard");
         ierarhieAngajati.add("MembruDeBoard");
+
         for(String x : ierarhieAngajati)
             frecventaAngajati.put(x,0);
-
-        Angajati.add(new MembruDeProiect("Robert Ionescu",2000,"departament0", "proiect0"));
-        Angajati.add(new MembruDeProiect("George Popescu",3000,"departament1", "proiect1"));
-        Angajati.add(new DirectorDeDepartament("Ion Barbu",8000,"departament1"));
         for(Angajat x : Angajati)
         {
             int count = frecventaAngajati.get(x.getTypeAngajat());
@@ -37,9 +45,48 @@ public final class Service {
             System.out.println("Urmatoarea comanda: ");
             String s = in.next();
             s.toLowerCase();
+
+            /*
+            *
+            *      LA COMANDA EXIT SE SALVEAZA PROGRESUL
+            *
+            *
+             */
+
             if(s.equals("!exit")){
+                try {
+                    csvRepo.Logger("exit" + "," + LocalDate.now().toString() + " " + LocalTime.now().toString());
+                    List<Angajat> ang = new ArrayList<>();
+                    List<DirectorDeCanal> directoriCanal = new ArrayList<>();
+                    List<MembruDeProiect> membriiProiect = new ArrayList<>();
+                    List<DirectorDeDepartament> directoriDep = new ArrayList<>();
+                    for (Angajat angajat : Angajati) {
+                        if (angajat.getClass() == Angajat.class) {
+                            ang.add(angajat);
+                        } else if (angajat.getClass() == DirectorDeCanal.class) {
+                            directoriCanal.add((DirectorDeCanal) angajat);
+                        } else if (angajat.getClass() == MembruDeProiect.class) {
+                            membriiProiect.add((MembruDeProiect) angajat);
+                        } else if (angajat.getClass() == DirectorDeDepartament.class) {
+                            directoriDep.add((DirectorDeDepartament) angajat);
+                        }
+                    }
+                    csvRepo.write(ang,"./Angajati.csv");
+                    csvRepo.write(directoriCanal,"./DirectoriDeCanal.csv");
+                    csvRepo.write(membriiProiect,"./MembriDeProiect.csv");
+                    csvRepo.write(directoriDep,"./DirectoriDeDepartament.csv");
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
                 System.exit(0);
             } else if (s.equals("!help")) {
+                try {
+                    csvRepo.Logger("help" + "," + LocalDate.now().toString() + " " + LocalTime.now().toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 System.out.println("1. !angajez = comanda pentru a angaja o persoana");
                 System.out.println("2. !concediez = comanda pentru a concedia un angajat");
                 System.out.println("3. !cresc_salariu = comanda pentru a creste salariul unui angajat");
@@ -52,54 +99,103 @@ public final class Service {
                 System.out.println("9. !numar_angajati = comanda pentru a afisa numarul de angajati");
                 System.out.println("10. !acorda_vacanta = comanda pentru a acorda vacanta unui angajat");
             } else if (s.equals("!angajez")){
+                try {
+                    csvRepo.Logger("angajez" + "," + LocalDate.now().toString() + " " + LocalTime.now().toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 this.angajez();
                 
             } else if (s.equals("!concediez")){
+
+                try {
+                    csvRepo.Logger("concediez" + "," + LocalDate.now().toString() + " " + LocalTime.now().toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 System.out.println("ID-ul persoanei concediate: ");
                 int ID_angajat = in.nextInt();
                 this.concediez(ID_angajat);
 
             } else if (s.equals("!cresc_salariu")){
-
+                try {
+                    csvRepo.Logger("cresc_salariu" + "," + LocalDate.now().toString() + " " + LocalTime.now().toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 this.crescSalariul();
 
             } else if (s.equals("!scad_salariu")){
-
+                try {
+                    csvRepo.Logger("scad_salariu" + "," + LocalDate.now().toString() + " " + LocalTime.now().toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 this.scadSalariul();
 
             } else if (s.equals("!sortare_id")){
-
+                try {
+                    csvRepo.Logger("sortare_id" + "," + LocalDate.now().toString() + " " + LocalTime.now().toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 Collections.sort(Angajati,new AngajatComparatorById());
 
             } else if (s.equals("!sortare_nume")){
-
+                try {
+                    csvRepo.Logger("sortare_nume" + "," + LocalDate.now().toString() + " " + LocalTime.now().toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 Collections.sort(Angajati);
 
             } else if (s.equals("!afisare_angajati")){
-
+                try {
+                    csvRepo.Logger("afisare_angajati" + "," + LocalDate.now().toString() + " " + LocalTime.now().toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 for(Angajat x : Angajati){
                     x.afisare();
                     System.out.println();
                 }
 
             } else if (s.equals("!numar_angajati")){
-
+                try {
+                    csvRepo.Logger("numar_angajati" + "," + LocalDate.now().toString() + " " + LocalTime.now().toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 System.out.print("Numarul total de angajati care au fost in firma: ");
                 System.out.println(this.getNumarAngajati());
                 System.out.print("Numarul total de angajati actuali: ");
                 System.out.println(Angajati.size());
 
             } else if (s.equals("!acorda_vacanta")){
-
+                try {
+                    csvRepo.Logger("acorda_vacanta" + "," + LocalDate.now().toString() + " " + LocalTime.now().toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 System.out.println("ID-ul angajatului care va primi vacanta: ");
                 int ID_angajat = in.nextInt();
                 this.acordaVacanta(ID_angajat);
 
             } else if(s.equals("!afisare_ierarhie")){
+                try {
+                    csvRepo.Logger("afisare_ierarhie" + "," + LocalDate.now().toString() + " " + LocalTime.now().toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 this.afisareIerarhie();
             } else if (s.length() > 0){
+                try {
+                    csvRepo.Logger("undefined" + "," + LocalDate.now().toString() + " " + LocalTime.now().toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 System.out.println("comanda inexistenta:");
             }
         }
@@ -213,6 +309,7 @@ public final class Service {
         Angajati.remove(index);
 
     }
+
     private void afisareIerarhie() {
         for(int i=0;i<ierarhieAngajati.size();i++) {
             int frecventa = frecventaAngajati.get(ierarhieAngajati.get(i));
@@ -220,6 +317,7 @@ public final class Service {
                 System.out.println(ierarhieAngajati.get(i) + ": " + frecventa);
         }
     }
+
     private void acordaVacanta(int ID_angajat) {
         int index = findIndexAngajat(ID_angajat);
         if(index != -1)

@@ -9,8 +9,8 @@ public final class DirectorDeCanal extends AngajatCuDepartament {
         this.numeleCanalului = null;
     }
 
-    public DirectorDeCanal(String nume, int salariu, String departament, String numeleCanalului) {
-        super(nume, salariu, departament);
+    public DirectorDeCanal(String nume, int salariu, String departament, String numeleCanalului,boolean vacanta) {
+        super(nume, salariu, departament,vacanta);
         this.typeAngajat = "DirectorDeCanal";
         this.numeleCanalului = numeleCanalului;
     }

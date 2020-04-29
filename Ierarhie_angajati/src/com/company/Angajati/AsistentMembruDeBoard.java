@@ -6,8 +6,8 @@ public final class AsistentMembruDeBoard extends Angajat {
         this.typeAngajat = "AsistentMembruDeBoard";
     }
 
-    public AsistentMembruDeBoard(String nume, int salariu) {
-        super(nume, salariu);
+    public AsistentMembruDeBoard(String nume, int salariu,boolean vacanta) {
+        super(nume, salariu,vacanta);
         this.typeAngajat = "AsistentMembruDeBoard";
     }
 }

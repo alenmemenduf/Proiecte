@@ -8,8 +8,8 @@ public class AngajatCuDepartament extends Angajat {
         this.typeAngajat = "AngajatCuDepartament";
         departament = null;
     }
-    public AngajatCuDepartament(String nume, int salariu, String departament) {
-        super(nume, salariu);
+    public AngajatCuDepartament(String nume, int salariu, String departament,boolean vacanta) {
+        super(nume, salariu,vacanta);
         this.typeAngajat = "AngajatCuDepartament";
         this.departament = departament;
     }

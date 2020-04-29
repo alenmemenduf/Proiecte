@@ -9,13 +9,13 @@ public final class MembruDeBoard extends Angajat {
         asistent = null;
     }
 
-    public MembruDeBoard(String nume, int salariu) {
-        super(nume, salariu);
+    public MembruDeBoard(String nume, int salariu,boolean vacanta) {
+        super(nume, salariu,vacanta);
         this.typeAngajat = "MembruDeBoard";
         this.asistent = null;
     }
-    public MembruDeBoard(String nume, int salariu, AsistentMembruDeBoard asistent) {
-        super(nume, salariu);
+    public MembruDeBoard(String nume, int salariu, AsistentMembruDeBoard asistent,boolean vacanta) {
+        super(nume, salariu,vacanta);
         this.typeAngajat = "MembruDeBoard";
         this.asistent = asistent;
     }

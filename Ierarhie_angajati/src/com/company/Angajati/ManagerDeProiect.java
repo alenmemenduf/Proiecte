@@ -8,8 +8,8 @@ public final class ManagerDeProiect extends MembruDeProiect {
         this.typeAngajat = "ManagerDeProiect";
     }
 
-    public ManagerDeProiect(String nume, int salariu, String departament, String numeProiect) {
-        super(nume, salariu, departament, numeProiect);
+    public ManagerDeProiect(String nume, int salariu, String departament, String numeProiect,boolean vacanta) {
+        super(nume, salariu, departament, numeProiect,vacanta);
         this.typeAngajat = "ManagerDeProiect";
     }
 }

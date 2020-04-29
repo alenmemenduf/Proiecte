@@ -9,8 +9,8 @@ public class MembruDeProiect extends AngajatCuDepartament {
         this.typeAngajat = "MembruDeProiect";
     }
 
-    public MembruDeProiect(String nume, int salariu, String departament, String numeProiect) {
-        super(nume, salariu, departament);
+    public MembruDeProiect(String nume, int salariu, String departament, String numeProiect,boolean vacanta) {
+        super(nume, salariu, departament,vacanta);
         this.typeAngajat = "MembruDeProiect";
         this.numeProiect = numeProiect;
     }
